@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.0.4
+
+[compare changes](https://github.com/enkot/nuxt-app-config-plus/compare/v0.0.3...v0.0.4)
+
+### 🩹 Fixes
+
+- Incorrect directory check ([99d0eb0](https://github.com/enkot/nuxt-app-config-plus/commit/99d0eb0))
+
+### ❤️ Contributors
+
+- Enkot ([@enkot](http://github.com/enkot))
+
 ## v0.0.3
 
 [compare changes](https://github.com/enkot/nuxt-app-config-plus/compare/v0.0.2...v0.0.3)
