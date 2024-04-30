@@ -1,6 +1,6 @@
 <template>
   <div>
-    {{ config.foo.bar.cat.name + ' ' + config.foo.catDog.name + ' ' + config.foo.bar.isAnimal }}
+    {{ config.foo.fooBar.cat.name + ' ' + config.foo.catDog.name + ' ' + config.foo.fooBar.isAnimal }}
   </div>
 </template>
 

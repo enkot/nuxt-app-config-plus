@@ -66,7 +66,7 @@ async function pathToNestedObject(
   for (const dirent of dirContent!) {
     const fullPath = pathe.resolve(dirPath, dirent.name)
     if (dirent.isDirectory()) {
-      fileMap[dirent.name] = await pathToNestedObject(fullPath, sources, originalPath)
+      fileMap[camelCase(dirent.name)] = await pathToNestedObject(fullPath, sources, originalPath)
     }
     else if (dirent.isFile() && extensionsRe.test(dirent.name)) {
       const relativePath = removeExtension(pathe.relative(originalPath, fullPath))
