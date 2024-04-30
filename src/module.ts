@@ -5,12 +5,19 @@ import { camelCase } from 'scule'
 
 const moduleName = 'app-config-plus'
 
-export default defineNuxtModule({
+export interface ModuleOptions {
+  dir: string
+}
+
+export default defineNuxtModule<ModuleOptions>({
   meta: {
     name: `nuxt-${moduleName}`,
     configKey: moduleName,
   },
-  async setup(_, nuxt) {
+  defaults: {
+    dir: 'app-config',
+  },
+  async setup(options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
 
     const layersConfigs = (await Promise.all(nuxt.options._layers.map(async (layer, index) => {
@@ -18,7 +25,7 @@ export default defineNuxtModule({
 
       if (filePath) return filePath
 
-      const dirPath = await findPath(resolve(layer.config.srcDir, 'app-config'), {}, 'dir')
+      const dirPath = await findPath(resolve(layer.config.srcDir, options.dir), {}, 'dir')
 
       if (dirPath) {
         const sources: { name: string, path: string }[] = []
