@@ -1,6 +1,6 @@
 {
   "name": "nuxt-app-config-plus",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Create complex directory-based Nuxt App Config with ease.",
   "repository": "enkot/nuxt-app-config-plus",
   "keywords": [

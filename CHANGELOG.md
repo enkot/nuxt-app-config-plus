@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.0.8
+
+[compare changes](https://github.com/enkot/nuxt-app-config-plus/compare/v0.0.7...v0.0.8)
+
+### 🩹 Fixes
+
+- Object unpacking ([e7414e9](https://github.com/enkot/nuxt-app-config-plus/commit/e7414e9))
+
+### ❤️ Contributors
+
+- Enkot ([@enkot](http://github.com/enkot))
+
 ## v0.0.7
 
 [compare changes](https://github.com/enkot/nuxt-app-config-plus/compare/v0.0.6...v0.0.7)
