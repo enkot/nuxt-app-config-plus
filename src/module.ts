@@ -4,6 +4,7 @@ import pathe from 'pathe'
 import { camelCase } from 'scule'
 
 const moduleName = 'app-config-plus'
+const extensionsRe = /\.(js|mjs|cjs|ts|mts|cts|json)$/
 
 export interface ModuleOptions {
   dir: string
@@ -67,7 +68,7 @@ async function pathToNestedObject(
     if (dirent.isDirectory()) {
       fileMap[dirent.name] = await pathToNestedObject(fullPath, sources, originalPath)
     }
-    else if (dirent.isFile()) {
+    else if (dirent.isFile() && extensionsRe.test(dirent.name)) {
       const relativePath = removeExtension(pathe.relative(originalPath, fullPath))
       const name = camelCase(relativePath)
       fileMap[removeExtension(dirent.name)] = `{${name}}`
@@ -90,7 +91,7 @@ function unpackObjectValues(config: object) {
 }
 
 function removeExtension(path: string) {
-  return path.replace(/\.(js|mjs|cjs|ts|mts|cts|json)$/, '')
+  return path.replace(extensionsRe, '')
 }
 
 async function isDirectory(path: string) {
