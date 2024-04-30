@@ -33,7 +33,7 @@ export default defineNuxtModule<ModuleOptions>({
         addTemplate({
           filename,
           getContents: () => `
-${sources.map(({ name, path }) => `import ${name} from "${path}"`).join('\n')}
+${sources.map(({ name, path }) => `import ${name} from "${removeExtension(path)}"`).join('\n')}
 
 export default ${unpackObjectValues(config)}
           `,
@@ -90,7 +90,7 @@ function unpackObjectValues(config: object) {
 }
 
 function removeExtension(path: string) {
-  return path.replace(/\.(js|mjs|cjs|ts|mts|cts|json)$/, '')
+  return path.replace(/\.(js|mjs|cjs|ts|mts|cts)$/, '')
 }
 
 async function isDirectory(path: string) {
