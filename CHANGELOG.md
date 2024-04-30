@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.0.7
+
+[compare changes](https://github.com/enkot/nuxt-app-config-plus/compare/v0.0.6...v0.0.7)
+
+### 🩹 Fixes
+
+- Convert folder names to camel-case ([7c68e85](https://github.com/enkot/nuxt-app-config-plus/commit/7c68e85))
+
+### ❤️ Contributors
+
+- Enkot ([@enkot](http://github.com/enkot))
+
 ## v0.0.6
 
 [compare changes](https://github.com/enkot/nuxt-app-config-plus/compare/v0.0.5...v0.0.6)
