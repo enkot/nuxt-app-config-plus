@@ -12,7 +12,7 @@ export interface ModuleOptions {
 export default defineNuxtModule<ModuleOptions>({
   meta: {
     name: `nuxt-${moduleName}`,
-    configKey: moduleName,
+    configKey: camelCase(moduleName),
   },
   defaults: {
     dir: 'app-config',
