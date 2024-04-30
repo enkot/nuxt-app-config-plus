@@ -71,7 +71,7 @@ async function pathToNestedObject(
     else if (dirent.isFile() && extensionsRe.test(dirent.name)) {
       const relativePath = removeExtension(pathe.relative(originalPath, fullPath))
       const name = camelCase(relativePath)
-      fileMap[removeExtension(dirent.name)] = `{${name}}`
+      fileMap[camelCase(removeExtension(dirent.name))] = `{${name}}`
       sources?.push({ name, path: fullPath })
     }
   }
@@ -85,9 +85,12 @@ async function pathToNestedObject(
 }
 
 function unpackObjectValues(config: object) {
-  return JSON.stringify(config)
-    .replaceAll(/\[(.+?),{(.+?)}\]/g, '{...$1,$2}')
-    .replaceAll(/"{(.+?)}"/g, '$1')
+  return removeNestedBrackets(JSON.stringify(config)).replaceAll(/"{(.+?)}"/g, '$1')
+}
+
+function removeNestedBrackets(val: string): string {
+  const newVal = val.replace(/\[(.+?),{(.+?)}\]/g, '{...$1,$2}')
+  return newVal === val ? val : removeNestedBrackets(newVal)
 }
 
 function removeExtension(path: string) {
