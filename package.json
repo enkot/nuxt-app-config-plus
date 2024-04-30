@@ -1,0 +1,56 @@
+{
+  "name": "nuxt-app-config-plus",
+  "version": "0.0.0",
+  "description": "Create complex directory-based Nuxt App Config with ease.",
+  "repository": "enkot/nuxt-app-config-plus",
+  "keywords": [
+    "nuxt",
+    "nuxt3",
+    "config",
+    "folder",
+    "nested",
+    "composable"
+  ],
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/types.d.ts",
+      "import": "./dist/module.mjs",
+      "require": "./dist/module.cjs"
+    }
+  },
+  "main": "./dist/module.cjs",
+  "types": "./dist/types.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "prepack": "nuxt-module-build build",
+    "dev": "nuxi dev playground",
+    "dev:build": "nuxi build playground",
+    "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
+    "release": "npm run lint && npm run test && npm run prepack && changelogen --release && npm publish && git push --follow-tags",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest watch"
+  },
+  "dependencies": {
+    "@nuxt/kit": "^3.11.2",
+    "klona": "^2.0.6",
+    "pathe": "^1.1.2",
+    "scule": "^1.3.0"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "^1.1.5",
+    "@nuxt/eslint-config": "^0.3.6",
+    "@nuxt/module-builder": "^0.5.5",
+    "@nuxt/schema": "^3.11.2",
+    "@nuxt/test-utils": "^3.12.0",
+    "@types/node": "^20.12.7",
+    "changelogen": "^0.5.5",
+    "eslint": "^9.0.0",
+    "nuxt": "^3.11.2",
+    "vitest": "^1.4.0"
+  }
+}
