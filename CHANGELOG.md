@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.0.6
+
+[compare changes](https://github.com/enkot/nuxt-app-config-plus/compare/v0.0.5...v0.0.6)
+
+### 🩹 Fixes
+
+- Only scan files with certain extensions ([2861599](https://github.com/enkot/nuxt-app-config-plus/commit/2861599))
+
+### ❤️ Contributors
+
+- Enkot ([@enkot](http://github.com/enkot))
+
 ## v0.0.5
 
 [compare changes](https://github.com/enkot/nuxt-app-config-plus/compare/v0.0.4...v0.0.5)
