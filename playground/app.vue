@@ -7,5 +7,4 @@
 
 <script setup lang="ts">
 const config = useAppConfig()
-config.foo
 </script>

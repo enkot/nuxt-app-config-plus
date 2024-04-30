@@ -1,5 +1,5 @@
-import { promises as fsp } from 'node:fs'
-import { createResolver, defineNuxtModule, findPath, addTemplate } from '@nuxt/kit'
+import { existsSync, promises as fsp } from 'node:fs'
+import { defineNuxtModule, findPath, addTemplate } from '@nuxt/kit'
 import pathe from 'pathe'
 import { camelCase } from 'scule'
 
@@ -18,16 +18,14 @@ export default defineNuxtModule<ModuleOptions>({
     dir: 'app-config',
   },
   async setup(options, nuxt) {
-    const { resolve } = createResolver(import.meta.url)
-
     const layersConfigs = (await Promise.all(nuxt.options._layers.map(async (layer, index) => {
-      const filePath = await findPath(resolve(layer.config.srcDir, 'app.config'))
+      const filePath = await findPath(pathe.resolve(layer.config.srcDir, 'app.config'))
 
       if (filePath) return filePath
 
-      const dirPath = await findPath(resolve(layer.config.srcDir, options.dir), {}, 'dir')
+      const dirPath = pathe.resolve(layer.config.srcDir, options.dir)
 
-      if (dirPath) {
+      if (existsSync(dirPath) && await isDirectory(dirPath)) {
         const sources: { name: string, path: string }[] = []
         const config = await pathToNestedObject(dirPath, sources)
         const filename = `app-configs/cfg${index}.ts`
@@ -93,4 +91,8 @@ function unpackObjectValues(config: object) {
 
 function removeExtension(path: string) {
   return path.replace(/\.(js|mjs|cjs|ts|mts|cts|json)$/, '')
+}
+
+async function isDirectory(path: string) {
+  return (await fsp.lstat(path)).isDirectory()
 }
