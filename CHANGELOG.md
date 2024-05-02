@@ -1,6 +1,22 @@
 # Changelog
 
 
+## v0.0.9
+
+[compare changes](https://github.com/enkot/nuxt-app-config-plus/compare/v0.0.8...v0.0.9)
+
+### 🚀 Enhancements
+
+- Add "case" option ([24cef14](https://github.com/enkot/nuxt-app-config-plus/commit/24cef14))
+
+### 🏡 Chore
+
+- **release:** V0.0.8 ([f706b2f](https://github.com/enkot/nuxt-app-config-plus/commit/f706b2f))
+
+### ❤️ Contributors
+
+- Enkot ([@enkot](http://github.com/enkot))
+
 ## v0.0.8
 
 [compare changes](https://github.com/enkot/nuxt-app-config-plus/compare/v0.0.7...v0.0.8)
