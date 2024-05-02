@@ -1,13 +1,19 @@
 import { existsSync, promises as fsp } from 'node:fs'
 import { defineNuxtModule, findPath, addTemplate } from '@nuxt/kit'
 import pathe from 'pathe'
-import { camelCase } from 'scule'
+import { camelCase, kebabCase } from 'scule'
 
 const moduleName = 'app-config-plus'
 const extensionsRe = /\.(js|mjs|cjs|ts|mts|cts|json)$/
 
+type Case = 'camelCase' | 'kebabCase' | {
+  dir?: 'camelCase' | 'kebabCase'
+  file?: 'camelCase' | 'kebabCase'
+}
+
 export interface ModuleOptions {
   dir: string
+  case?: Case
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -28,7 +34,7 @@ export default defineNuxtModule<ModuleOptions>({
 
       if (existsSync(dirPath) && await isDirectory(dirPath)) {
         const sources: { name: string, path: string }[] = []
-        const config = await pathToNestedObject(dirPath, sources)
+        const config = await pathToNestedObject(dirPath, { sources, case: options.case })
         const filename = `app-configs/cfg${index}.ts`
 
         addTemplate({
@@ -57,7 +63,10 @@ export default ${unpackObjectValues(config)}
 
 async function pathToNestedObject(
   dirPath: string,
-  sources?: { name: string, path: string }[],
+  opts?: {
+    sources?: { name: string, path: string }[]
+    case?: Case
+  },
   originalPath = dirPath,
 ) {
   const fileMap: Record<string, unknown> = {}
@@ -66,13 +75,13 @@ async function pathToNestedObject(
   for (const dirent of dirContent!) {
     const fullPath = pathe.resolve(dirPath, dirent.name)
     if (dirent.isDirectory()) {
-      fileMap[camelCase(dirent.name)] = await pathToNestedObject(fullPath, sources, originalPath)
+      fileMap[changeCase(dirent.name, typeof opts?.case === 'object' ? opts.case.dir : opts?.case)] = await pathToNestedObject(fullPath, opts, originalPath)
     }
     else if (dirent.isFile() && extensionsRe.test(dirent.name)) {
       const relativePath = removeExtension(pathe.relative(originalPath, fullPath))
       const name = camelCase(relativePath)
-      fileMap[camelCase(removeExtension(dirent.name))] = `{${name}}`
-      sources?.push({ name, path: fullPath })
+      fileMap[changeCase(removeExtension(dirent.name), typeof opts?.case === 'object' ? opts.case.file : opts?.case)] = `{${name}}`
+      opts?.sources?.push({ name, path: fullPath })
     }
   }
 
@@ -99,4 +108,10 @@ function removeExtension(path: string) {
 
 async function isDirectory(path: string) {
   return (await fsp.lstat(path)).isDirectory()
+}
+
+function changeCase(input: string, caseType?: 'camelCase' | 'kebabCase') {
+  if (caseType === 'camelCase') return camelCase(input)
+  if (caseType === 'kebabCase') return kebabCase(input)
+  return input
 }

@@ -8,14 +8,14 @@ Find and replace all on all files (CMD+SHIFT+F):
 -->
 [![Nuxt Configs](./public/cover.png)](https://nuxt-open-fetch.vercel.app/)
 
-# Nuxt Configs
+# Nuxt App Config Plus
 
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
 [![License][license-src]][license-href]
 [![Nuxt][nuxt-src]][nuxt-href]
 
-Create nested App Config using folder structure
+Create nested App Config using a folder structure
 
 - [✨ &nbsp;Release Notes](/CHANGELOG.md)
 <!-- - [🏀 Online playground](https://stackblitz.com/github/your-org/nuxt-configs?file=playground%2Fapp.vue) -->
@@ -24,7 +24,7 @@ Create nested App Config using folder structure
 ## Features
 
 <!-- Highlight some of the features your module provide here -->
-- 🗂 &nbsp;Generate App Config using folder structure
+- 🗂 &nbsp;Generate App Config using a folder structure
 - 🍹 &nbsp;No need for redundant index files and re-exports
 - 📃 &nbsp;Supports `js`, `ts` and `json` files
 - 🥞 &nbsp;Supports Nuxt layers
