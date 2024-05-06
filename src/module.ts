@@ -57,6 +57,9 @@ export default ${unpackObjectValues(config)}
 
     nuxt.hook('nitro:init', async (nitro) => {
       nitro.options.appConfigFiles = layersConfigs
+      nitro.hooks.hook('prerender:config', async (config) => {
+        config.appConfigFiles = layersConfigs
+      })
     })
   },
 })
