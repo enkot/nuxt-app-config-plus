@@ -4,7 +4,7 @@ import { defineEventHandler } from 'h3'
 export default defineEventHandler(async () => {
   const config = useAppConfig()
 
-  console.log('config', config.foo.catDog)
+  console.log('config', config.dog.name)
 
   return {}
 })

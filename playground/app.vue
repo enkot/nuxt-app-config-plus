@@ -1,7 +1,7 @@
 <template>
   <div>
     Nuxt module playground!
-    {{ config.foo.fooBar.cat.name }}
+    {{ config.foo }}
   </div>
 </template>
 
