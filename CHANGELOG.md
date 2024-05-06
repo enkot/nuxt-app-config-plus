@@ -1,6 +1,19 @@
 # Changelog
 
 
+## v0.1.0
+
+[compare changes](https://github.com/enkot/nuxt-app-config-plus/compare/v0.0.9...v0.1.0)
+
+### 🚀 Enhancements
+
+- Server-only configs ([15680e6](https://github.com/enkot/nuxt-app-config-plus/commit/15680e6))
+- Set appConfigFiles on prerender ([0f978cb](https://github.com/enkot/nuxt-app-config-plus/commit/0f978cb))
+
+### ❤️ Contributors
+
+- Enkot ([@enkot](http://github.com/enkot))
+
 ## v0.0.9
 
 [compare changes](https://github.com/enkot/nuxt-app-config-plus/compare/v0.0.8...v0.0.9)
