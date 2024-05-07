@@ -41,6 +41,32 @@ npx nuxi module add nuxt-app-config-plus
 
 That's it! You can now use Nuxt App Config Plus in your Nuxt app ✨
 
+## Overview
+The `nuxt-app-config-plus` module allows you to generate App Config  based on a specified folder structure. It supports `js`, `ts`, and `json` files and is compatible with Nuxt layers.
+
+### Server-side only
+
+In some cases, you may want certain configurations to be applied only on the server-side and not included in the client-side bundle. This can be useful for sensitive data that should not be exposed to the client, or for configurations that are only relevant to the server environment.
+
+#### Usage
+To mark a config as server-side only, simply prefix the folder or file name with an `@` symbol. The module will then only include this configuration on the server-side:
+```bash
+/app-config
+  /@foo
+    bar.ts
+```
+
+In this example, the `bar.ts` file inside the `@foo` folder will only be included in the server-side config.
+
+## Options
+### `dir`
+The dir option allows you to specify the directory that the module should scan for configuration files. By default, the module scans the `/app-config` directory in the root of your project.
+
+### `case`
+By default, module uses the folder names as keys in the App Config object exactly as they are. This means that the keys are case-sensitive. For example, a folder named `MyFolder` would result in a key `MyFolder` in the configuration object.
+
+You can change this default behavior by setting `case` to `camelCase` or `kebabCase`, so the module will convert all folder names to camel case or kebab case respectively.
+
 
 ## Contribution
 
