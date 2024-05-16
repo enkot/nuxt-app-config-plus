@@ -1,6 +1,22 @@
 # Changelog
 
 
+## v0.2.0
+
+[compare changes](https://github.com/enkot/nuxt-app-config-plus/compare/v0.1.0...v0.2.0)
+
+### 🚀 Enhancements
+
+- Nitro only configs ([a276dde](https://github.com/enkot/nuxt-app-config-plus/commit/a276dde))
+
+### 📖 Documentation
+
+- Adds options and "server-side only" description ([fd6d9e5](https://github.com/enkot/nuxt-app-config-plus/commit/fd6d9e5))
+
+### ❤️ Contributors
+
+- Enkot ([@enkot](http://github.com/enkot))
+
 ## v0.1.0
 
 [compare changes](https://github.com/enkot/nuxt-app-config-plus/compare/v0.0.9...v0.1.0)
