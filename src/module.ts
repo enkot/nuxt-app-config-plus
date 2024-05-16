@@ -26,22 +26,49 @@ export default defineNuxtModule<ModuleOptions>({
     dir: 'app-config',
   },
   async setup(options, nuxt) {
-    const layersConfigs = (await Promise.all(nuxt.options._layers.map(async (layer: NuxtConfigLayer, index: number) => {
+    const nuxtLayersConfigs: string[] = []
+    const nitroLayersConfigs: string[] = []
+
+    await Promise.all(nuxt.options._layers.map(async (layer: NuxtConfigLayer, index: number) => {
       const filePath = await findPath(pathe.resolve(layer.config.srcDir, 'app.config'))
 
-      if (filePath) return { nuxt: filePath, nitro: filePath }
+      if (filePath) {
+        nuxtLayersConfigs.push(filePath)
+        nitroLayersConfigs.push(filePath)
+      }
 
       const dirPath = pathe.resolve(layer.config.srcDir, options.dir)
 
       if (existsSync(dirPath) && await isDirectory(dirPath)) {
         const name = `cfg${index}`
-        const nuxtFilename = `app-configs/${name}.ts`
-        const nitroFilename = `app-configs/server/${name}.ts`
         const sources: { name: string, path: string }[] = []
-        const { server, ...config } = await pathToNestedObject(dirPath, { sources, case: options.case })
+        const config = await pathToNestedObject(dirPath, { sources, case: options.case }) as Record<string, unknown>
+
+        if (config.server) {
+          const filename = pathe.resolve(nuxt.options.buildDir, `app-configs/server/${name}.ts`)
+          const serverConfig = config.server
+          delete config.server
+
+          addTemplate({
+            filename,
+            async getContents() {
+              return (
+`${mapImports(sources.filter(({ name }) => kebabCase(name).startsWith('server-')))}
+import ${name} from "../${name}"
+      
+export default ${serverConfig ? `{...${name},server:${unpackObjectValues(serverConfig)}}` : `${name}`}
+`.trimStart())
+            },
+            write: true,
+          })
+
+          nuxtLayersConfigs.push(filename)
+        }
+
+        const filename = pathe.resolve(nuxt.options.buildDir, `app-configs/${name}.ts`)
 
         addTemplate({
-          filename: nuxtFilename,
+          filename,
           async getContents() {
             return (
 `${mapImports(sources.filter(({ name }) => !kebabCase(name).startsWith('server-')))}
@@ -52,38 +79,18 @@ export default ${unpackObjectValues(config)}
           write: true,
         })
 
-        addTemplate({
-          filename: nitroFilename,
-          async getContents() {
-            return (
-`${mapImports(sources.filter(({ name }) => kebabCase(name).startsWith('server-')))}
-import ${name} from "../${name}"
-    
-export default ${server ? `{...${name},server:${unpackObjectValues(server)}}` : `${name}`}
-`.trimStart())
-          },
-          write: true,
-        })
-
-        return {
-          nuxt: pathe.resolve(nuxt.options.buildDir, nuxtFilename),
-          nitro: pathe.resolve(nuxt.options.buildDir, nitroFilename),
-        }
+        nuxtLayersConfigs.push(pathe.resolve(nuxt.options.buildDir, `app-configs/${name}.ts`))
       }
-    }))).filter(Boolean) as {
-      nuxt: string
-      nitro: string
-    }[]
+    }))
 
     nuxt.hook('app:resolve', (app) => {
-      app.configs = layersConfigs.map(({ nuxt }) => nuxt)
+      app.configs = nuxtLayersConfigs
     })
 
     nuxt.hook('nitro:init', async (nitro) => {
-      const appConfigFiles = layersConfigs.map(({ nitro }) => nitro)
-      nitro.options.appConfigFiles = appConfigFiles
+      nitro.options.appConfigFiles = nitroLayersConfigs
       nitro.hooks.hook('prerender:config', async (config) => {
-        config.appConfigFiles = appConfigFiles
+        config.appConfigFiles = nitroLayersConfigs
       })
     })
   },
@@ -96,10 +103,7 @@ async function pathToNestedObject(
     case?: Case
   },
   originalPath = dirPath,
-): Promise<{
-  [key: string]: unknown
-  server?: Record<string, unknown>
-}> {
+) {
   const fileMap: Record<string, unknown> = {}
   const dirContent = await fsp.readdir(dirPath, { withFileTypes: true })
 
@@ -118,7 +122,6 @@ async function pathToNestedObject(
 
   if (fileMap.index) {
     const { index, ...rest } = fileMap
-    // @ts-expect-error - TS doesn't understand that `index` is a key
     return Object.keys(rest).length ? [index, rest] : index
   }
 
