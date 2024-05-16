@@ -2,6 +2,7 @@ import { existsSync, promises as fsp } from 'node:fs'
 import { defineNuxtModule, findPath, addTemplate } from '@nuxt/kit'
 import pathe from 'pathe'
 import { camelCase, kebabCase } from 'scule'
+import type { NuxtConfigLayer } from 'nuxt/schema'
 
 const moduleName = 'app-config-plus'
 const extensionsRe = /\.(js|mjs|cjs|ts|mts|cts|json)$/
@@ -25,40 +26,64 @@ export default defineNuxtModule<ModuleOptions>({
     dir: 'app-config',
   },
   async setup(options, nuxt) {
-    const layersConfigs = (await Promise.all(nuxt.options._layers.map(async (layer, index) => {
+    const layersConfigs = (await Promise.all(nuxt.options._layers.map(async (layer: NuxtConfigLayer, index: number) => {
       const filePath = await findPath(pathe.resolve(layer.config.srcDir, 'app.config'))
 
-      if (filePath) return filePath
+      if (filePath) return { nuxt: filePath, nitro: filePath }
 
       const dirPath = pathe.resolve(layer.config.srcDir, options.dir)
 
       if (existsSync(dirPath) && await isDirectory(dirPath)) {
+        const name = `cfg${index}`
+        const nuxtFilename = `app-configs/${name}.ts`
+        const nitroFilename = `app-configs/server/${name}.ts`
         const sources: { name: string, path: string }[] = []
-        const config = await pathToNestedObject(dirPath, { sources, case: options.case })
-        const filename = `app-configs/cfg${index}.ts`
+        const { server, ...config } = await pathToNestedObject(dirPath, { sources, case: options.case })
 
         addTemplate({
-          filename,
-          getContents: () => `
-${sources.map(({ name, path }) => `import ${name} from "${pathe.extname(path) === '.json' ? path : removeExtension(path)}"`).join('\n')}
-
+          filename: nuxtFilename,
+          async getContents() {
+            return (
+`${mapImports(sources.filter(({ name }) => !kebabCase(name).startsWith('server-')))}
+    
 export default ${unpackObjectValues(config)}
-          `,
+`.trimStart())
+          },
           write: true,
         })
 
-        return pathe.resolve(nuxt.options.buildDir, filename)
+        addTemplate({
+          filename: nitroFilename,
+          async getContents() {
+            return (
+`${mapImports(sources.filter(({ name }) => kebabCase(name).startsWith('server-')))}
+import ${name} from "../${name}"
+    
+export default ${server ? `{...${name},server:${unpackObjectValues(server)}}` : `${name}`}
+`.trimStart())
+          },
+          write: true,
+        })
+
+        return {
+          nuxt: pathe.resolve(nuxt.options.buildDir, nuxtFilename),
+          nitro: pathe.resolve(nuxt.options.buildDir, nitroFilename),
+        }
       }
-    }))).filter(Boolean) as string[]
+    }))).filter(Boolean) as {
+      nuxt: string
+      nitro: string
+    }[]
 
     nuxt.hook('app:resolve', (app) => {
-      app.configs = layersConfigs
+      app.configs = layersConfigs.map(({ nuxt }) => nuxt)
     })
 
     nuxt.hook('nitro:init', async (nitro) => {
-      nitro.options.appConfigFiles = layersConfigs
+      const appConfigFiles = layersConfigs.map(({ nitro }) => nitro)
+      nitro.options.appConfigFiles = appConfigFiles
       nitro.hooks.hook('prerender:config', async (config) => {
-        config.appConfigFiles = layersConfigs
+        config.appConfigFiles = appConfigFiles
       })
     })
   },
@@ -68,11 +93,13 @@ async function pathToNestedObject(
   dirPath: string,
   opts?: {
     sources?: { name: string, path: string }[]
-    serverSide?: boolean
     case?: Case
   },
   originalPath = dirPath,
-) {
+): Promise<{
+  [key: string]: unknown
+  server?: Record<string, unknown>
+}> {
   const fileMap: Record<string, unknown> = {}
   const dirContent = await fsp.readdir(dirPath, { withFileTypes: true })
 
@@ -83,7 +110,7 @@ async function pathToNestedObject(
     }
     else if (dirent.isFile() && extensionsRe.test(dirent.name)) {
       const relativePath = removeExtension(pathe.relative(originalPath, fullPath))
-      const name = camelCase(relativePath.replaceAll(/@/g, ''))
+      const name = camelCase(relativePath)
       fileMap[changeCase(removeExtension(dirent.name), typeof opts?.case === 'object' ? opts.case.file : opts?.case)] = `{${name}}`
       opts?.sources?.push({ name, path: fullPath })
     }
@@ -91,16 +118,20 @@ async function pathToNestedObject(
 
   if (fileMap.index) {
     const { index, ...rest } = fileMap
+    // @ts-expect-error - TS doesn't understand that `index` is a key
     return Object.keys(rest).length ? [index, rest] : index
   }
 
   return fileMap
 }
 
+function mapImports(sources: { name: string, path: string }[]) {
+  return sources.map(({ name, path }) => `import ${name} from "${pathe.extname(path) === '.json' ? path : removeExtension(path)}"`).join('\n')
+}
+
 function unpackObjectValues(config: object) {
   return removeNestedBrackets(JSON.stringify(config))
     .replaceAll(/"{(.+?)}"/g, '$1')
-    .replaceAll(/"@(.+?)":/g, '"$1":import.meta.client?null:')
 }
 
 function removeNestedBrackets(val: string): string {

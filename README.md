@@ -44,19 +44,19 @@ That's it! You can now use Nuxt App Config Plus in your Nuxt app ✨
 ## Overview
 The `nuxt-app-config-plus` module allows you to generate App Config  based on a specified folder structure. It supports `js`, `ts`, and `json` files and is compatible with Nuxt layers.
 
-### Server-side only
+### Configs for Nitro handlers
 
-In some cases, you may want certain configurations to be applied only on the server-side and not included in the client-side bundle. This can be useful for sensitive data that should not be exposed to the client, or for configurations that are only relevant to the server environment.
+In some cases, you may want certain configurations to be available only for the server hanlders (Nitro) and not included in the client-side bundle. This can be useful for configurations that are only relevant to the server environment.
 
 #### Usage
-To mark a config as server-side only, simply prefix the folder or file name with an `@` symbol. The module will then only include this configuration on the server-side:
+To mark a config as server-side only, simply put it under `server` folder. The module will then only include this configuration to the Nitro App Config:
 ```bash
 /app-config
-  /@foo
+  /server
     bar.ts
 ```
 
-In this example, the `bar.ts` file inside the `@foo` folder will only be included in the server-side config.
+In this example, the `bar.ts` file inside the `server` folder will only be included in the server-side Nitro config.
 
 ## Options
 ### `dir`
