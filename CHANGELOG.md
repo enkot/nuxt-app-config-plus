@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.2.1
+
+[compare changes](https://github.com/enkot/nuxt-app-config-plus/compare/v0.2.0...v0.2.1)
+
+### 🩹 Fixes
+
+- Refactor and fix configs generation ([2c062af](https://github.com/enkot/nuxt-app-config-plus/commit/2c062af))
+
+### ❤️ Contributors
+
+- Enkot ([@enkot](http://github.com/enkot))
+
 ## v0.2.0
 
 [compare changes](https://github.com/enkot/nuxt-app-config-plus/compare/v0.1.0...v0.2.0)
