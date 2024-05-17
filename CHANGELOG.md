@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.2.4
+
+[compare changes](https://github.com/enkot/nuxt-app-config-plus/compare/v0.2.3...v0.2.4)
+
+### 🩹 Fixes
+
+- Preserve configs order ([ef6626a](https://github.com/enkot/nuxt-app-config-plus/commit/ef6626a))
+
+### ❤️ Contributors
+
+- Enkot ([@enkot](http://github.com/enkot))
+
 ## v0.2.3
 
 [compare changes](https://github.com/enkot/nuxt-app-config-plus/compare/v0.2.2...v0.2.3)

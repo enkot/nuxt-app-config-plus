@@ -1,6 +1,6 @@
 {
   "name": "nuxt-app-config-plus",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Create nested App Config using a folder structure.",
   "repository": "enkot/nuxt-app-config-plus",
   "keywords": [
