@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.2.5
+
+[compare changes](https://github.com/enkot/nuxt-app-config-plus/compare/v0.2.4...v0.2.5)
+
+### 🩹 Fixes
+
+- Don't unpack non-objects ([1ab001d](https://github.com/enkot/nuxt-app-config-plus/commit/1ab001d))
+
+### ❤️ Contributors
+
+- Enkot ([@enkot](http://github.com/enkot))
+
 ## v0.2.4
 
 [compare changes](https://github.com/enkot/nuxt-app-config-plus/compare/v0.2.3...v0.2.4)
