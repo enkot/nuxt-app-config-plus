@@ -2,7 +2,6 @@ import { existsSync, promises as fsp } from 'node:fs'
 import { defineNuxtModule, findPath, addTemplate } from '@nuxt/kit'
 import pathe from 'pathe'
 import { camelCase, kebabCase } from 'scule'
-import type { NuxtConfigLayer } from 'nuxt/schema'
 
 const moduleName = 'app-config-plus'
 const extensionsRe = /\.(js|mjs|cjs|ts|mts|cts|json)$/
@@ -26,15 +25,14 @@ export default defineNuxtModule<ModuleOptions>({
     dir: 'app-config',
   },
   async setup(options, nuxt) {
-    const nuxtLayersConfigs: string[] = []
-    const nitroLayersConfigs: string[] = []
-
-    await Promise.all(nuxt.options._layers.map(async (layer: NuxtConfigLayer, index: number) => {
+    const configs = (await Promise.all(nuxt.options._layers.map(async (layer, index) => {
       const filePath = await findPath(pathe.resolve(layer.config.srcDir, 'app.config'))
 
       if (filePath) {
-        nuxtLayersConfigs.push(filePath)
-        nitroLayersConfigs.push(filePath)
+        return {
+          nuxt: filePath,
+          nitro: filePath,
+        }
       }
 
       const dirPath = pathe.resolve(layer.config.srcDir, options.dir)
@@ -72,10 +70,15 @@ export default ${server ? `{...${name},server:${unpackObjectValues(server)}}` : 
           write: true,
         })
 
-        nuxtLayersConfigs.push(nuxtFilename)
-        nitroLayersConfigs.push(nitroFilename)
+        return {
+          nuxt: nuxtFilename,
+          nitro: nitroFilename,
+        }
       }
-    }))
+    }))).filter(Boolean) as { nuxt: string, nitro: string }[]
+
+    const nuxtLayersConfigs = configs.map(({ nuxt }) => nuxt)
+    const nitroLayersConfigs = configs.map(({ nitro }) => nitro)
 
     nuxt.hook('app:resolve', (app) => {
       app.configs = nuxtLayersConfigs
