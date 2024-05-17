@@ -44,31 +44,26 @@ export default defineNuxtModule<ModuleOptions>({
         const sources: { name: string, path: string }[] = []
         const config = await pathToNestedObject(dirPath, { sources, case: options.case }) as Record<string, unknown>
 
-        if (config.server) {
-          const filename = pathe.resolve(nuxt.options.buildDir, `app-configs/server/${name}.ts`)
-          const serverConfig = config.server
-          delete config.server
-
-          addTemplate({
-            filename,
-            async getContents() {
-              return (
-`${mapImports(sources.filter(({ name }) => kebabCase(name).startsWith('server-')))}
-import ${name} from "../${name}"
-      
-export default ${serverConfig ? `{...${name},server:${unpackObjectValues(serverConfig)}}` : `${name}`}
-`.trimStart())
-            },
-            write: true,
-          })
-
-          nuxtLayersConfigs.push(filename)
-        }
-
-        const filename = pathe.resolve(nuxt.options.buildDir, `app-configs/${name}.ts`)
+        const nitroFilename = pathe.resolve(nuxt.options.buildDir, `app-configs/server/${name}.ts`)
+        const nuxtFilename = pathe.resolve(nuxt.options.buildDir, `app-configs/${name}.ts`)
+        const serverConfig = config.server
+        delete config.server
 
         addTemplate({
-          filename,
+          filename: nitroFilename,
+          async getContents() {
+            return (
+`${mapImports(sources.filter(({ name }) => kebabCase(name).startsWith('server-')))}
+import ${name} from "../${name}"
+    
+export default ${serverConfig ? `{...${name},server:${unpackObjectValues(serverConfig)}}` : `${name}`}
+`.trimStart())
+          },
+          write: true,
+        })
+
+        addTemplate({
+          filename: nuxtFilename,
           async getContents() {
             return (
 `${mapImports(sources.filter(({ name }) => !kebabCase(name).startsWith('server-')))}
@@ -79,7 +74,8 @@ export default ${unpackObjectValues(config)}
           write: true,
         })
 
-        nuxtLayersConfigs.push(pathe.resolve(nuxt.options.buildDir, `app-configs/${name}.ts`))
+        nuxtLayersConfigs.push(nuxtFilename)
+        nitroLayersConfigs.push(nitroFilename)
       }
     }))
 
@@ -90,7 +86,7 @@ export default ${unpackObjectValues(config)}
     nuxt.hook('nitro:init', async (nitro) => {
       nitro.options.appConfigFiles = nitroLayersConfigs
       nitro.hooks.hook('prerender:config', async (config) => {
-        config.appConfigFiles = nitroLayersConfigs
+        config.appConfigFiles = nuxtLayersConfigs
       })
     })
   },
