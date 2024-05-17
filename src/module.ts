@@ -42,25 +42,10 @@ export default defineNuxtModule<ModuleOptions>({
       if (existsSync(dirPath) && await isDirectory(dirPath)) {
         const name = `cfg${index}`
         const sources: { name: string, path: string }[] = []
-        const config = await pathToNestedObject(dirPath, { sources, case: options.case }) as Record<string, unknown>
+        const { server, ...config } = await pathToNestedObject(dirPath, { sources, case: options.case }) as Record<string, unknown>
 
-        const nitroFilename = pathe.resolve(nuxt.options.buildDir, `app-configs/server/${name}.ts`)
         const nuxtFilename = pathe.resolve(nuxt.options.buildDir, `app-configs/${name}.ts`)
-        const serverConfig = config.server
-        delete config.server
-
-        addTemplate({
-          filename: nitroFilename,
-          async getContents() {
-            return (
-`${mapImports(sources.filter(({ name }) => kebabCase(name).startsWith('server-')))}
-import ${name} from "../${name}"
-    
-export default ${serverConfig ? `{...${name},server:${unpackObjectValues(serverConfig)}}` : `${name}`}
-`.trimStart())
-          },
-          write: true,
-        })
+        const nitroFilename = pathe.resolve(nuxt.options.buildDir, `app-configs/server/${name}.ts`)
 
         addTemplate({
           filename: nuxtFilename,
@@ -69,6 +54,19 @@ export default ${serverConfig ? `{...${name},server:${unpackObjectValues(serverC
 `${mapImports(sources.filter(({ name }) => !kebabCase(name).startsWith('server-')))}
     
 export default ${unpackObjectValues(config)}
+`.trimStart())
+          },
+          write: true,
+        })
+
+        addTemplate({
+          filename: nitroFilename,
+          async getContents() {
+            return (
+`${mapImports(sources.filter(({ name }) => kebabCase(name).startsWith('server-')))}
+import ${name} from "../${name}"
+    
+export default ${server ? `{...${name},server:${unpackObjectValues(server)}}` : `${name}`}
 `.trimStart())
           },
           write: true,
