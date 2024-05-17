@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.2.2
+
+[compare changes](https://github.com/enkot/nuxt-app-config-plus/compare/v0.2.1...v0.2.2)
+
+### 🩹 Fixes
+
+- Incorrect app config for prerendering ([e037bcc](https://github.com/enkot/nuxt-app-config-plus/commit/e037bcc))
+
+### ❤️ Contributors
+
+- Enkot ([@enkot](http://github.com/enkot))
+
 ## v0.2.1
 
 [compare changes](https://github.com/enkot/nuxt-app-config-plus/compare/v0.2.0...v0.2.1)
