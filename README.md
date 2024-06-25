@@ -18,7 +18,7 @@ Find and replace all on all files (CMD+SHIFT+F):
 Create nested App Config using a folder structure.
 
 _This module will be helpful for large projects with a lot of configurations.
-If you have small to medium project, 99% you will not benefit from "config section per file" approach :)_
+If you have small to medium project, 99% you will not benefit from the "config section per file" approach :)_
 
 - [✨ &nbsp;Release Notes](/CHANGELOG.md)
 <!-- - [🏀 Online playground](https://stackblitz.com/github/your-org/nuxt-configs?file=playground%2Fapp.vue) -->
