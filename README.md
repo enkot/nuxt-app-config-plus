@@ -15,7 +15,10 @@ Find and replace all on all files (CMD+SHIFT+F):
 [![License][license-src]][license-href]
 [![Nuxt][nuxt-src]][nuxt-href]
 
-Create nested App Config using a folder structure
+Create nested App Config using a folder structure.
+
+This module will be helpful for large projects with a lot of configurations.
+If you have small to medium project, 99% you will not benefit from "config section per file" approach :)
 
 - [✨ &nbsp;Release Notes](/CHANGELOG.md)
 <!-- - [🏀 Online playground](https://stackblitz.com/github/your-org/nuxt-configs?file=playground%2Fapp.vue) -->
